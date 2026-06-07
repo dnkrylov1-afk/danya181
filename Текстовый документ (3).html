@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Квантастика | Живой рассказ о ребёнке</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #eef2f7;
+            min-height: 100vh;
+            padding: 24px 16px;
+        }
+
+        .erp-container {
+            max-width: 1360px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #0f2b3a;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .logo h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #f9c77d;
+        }
+        .logo p {
+            font-size: 0.7rem;
+            color: #bbd4f0;
+        }
+        .teacher-badge {
+            background: #2f5e7a;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: white;
+        }
+
+        .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .students-sidebar {
+            flex: 1;
+            min-width: 260px;
+            background: #f8fafd;
+            border-right: 1px solid #e2edf7;
+            padding: 1.5rem;
+        }
+        .students-sidebar h2 {
+            font-size: 1.2rem;
+            color: #1a4c6e;
+            margin-bottom: 1rem;
+        }
+        .student-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .student-card {
+            background: white;
+            padding: 12px 14px;
+            border-radius: 24px;
+            border: 1px solid #e0e9f2;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .student-card.active {
+            background: #fff6eb;
+            border-left: 5px solid #f97316;
+        }
+        .student-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .student-info h3 {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .student-info p {
+            font-size: 0.7rem;
+            color: #6a7e9e;
+        }
+        .badge {
+            font-size: 0.65rem;
+            padding: 4px 8px;
+            border-radius: 30px;
+            background: #f97316;
+            color: white;
+        }
+        .badge-empty {
+            background: #9aaebf;
+        }
+
+        .feedback-panel {
+            flex: 2;
+            padding: 1.8rem;
+        }
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0f2b3a;
+        }
+        .selected-block {
+            background: #f4f9fe;
+            padding: 0.8rem 1.2rem;
+            border-radius: 28px;
+            margin: 1rem 0;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .traits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 10px;
+            margin: 1.2rem 0;
+        }
+        .trait-item {
+            background: #fdfdfd;
+            border: 1px solid #e2edf7;
+            border-radius: 60px;
+            padding: 8px 12px 8px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .trait-item:hover {
+            background: #fff1e4;
+            border-color: #f9b172;
+        }
+        .trait-item input {
+            width: 18px;
+            height: 18px;
+            accent-color: #f97316;
+            cursor: pointer;
+        }
+        .trait-item label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 0.85rem;
+        }
+
+        .story-preview {
+            background: #fffbf5;
+            border-radius: 28px;
+            padding: 1.4rem;
+            border: 1px solid #ffe0b5;
+            margin: 1.2rem 0;
+        }
+        .preview-text {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 24px;
+            font-size: 0.95rem;
+            line-height: 1.65;
+            white-space: pre-wrap;
+            border-left: 5px solid #f97316;
+            color: #1e2a3a;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .send-btn {
+            background: #f97316;
+            border: none;
+            color: white;
+            font-weight: 700;
+            padding: 10px 28px;
+            border-radius: 40px;
+            cursor: pointer;
+            float: right;
+            margin-top: 8px;
+            transition: 0.2s;
+        }
+        .send-btn:hover {
+            background: #e05e0a;
+            transform: scale(1.01);
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1e2f3c;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            z-index: 200;
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .empty-prompt {
+            color: #b98f5c;
+            font-style: italic;
+        }
+        @media (max-width: 700px) {
+            .feedback-panel { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="erp-container">
+    <div class="header">
+        <div class="logo">
+            <h1>Квантастика</h1>
+            <p>живая обратная связь — как разговор по душам</p>
+        </div>
+        <div class="teacher-badge">Анна Сергеевна · преподаватель</div>
+    </div>
+
+    <div class="dashboard">
+        <div class="students-sidebar">
+            <h2>👧🏼 Мои ученики</h2>
+            <div id="studentList" class="student-list"></div>
+            <p style="font-size: 0.7rem; margin-top: 1rem; color: #5f7c9a;">
+                ✨ Выберите ребёнка → отметьте, что важного случилось → я напишу душевный рассказ для родителей
+            </p>
+        </div>
+        <div class="feedback-panel">
+            <div class="section-title">📖 Рассказ о ребёнке</div>
+            <div class="selected-block">
+                <span id="studentName" style="font-weight: 800;">— не выбран —</span>
+                <span id="parentEmail" style="font-size: 0.75rem; color: gray;">почта родителей</span>
+            </div>
+
+            <div style="font-weight: 600; margin-bottom: 6px;">Что я хочу рассказать о ребёнке (отметьте фрагменты):</div>
+            <div id="traitsContainer" class="traits-grid"></div>
+
+            <div class="story-preview">
+                <div style="font-weight: 700; margin-bottom: 8px;">✉️ Письмо родителям (живой рассказ)</div>
+                <div id="storyPreview" class="preview-text"></div>
+                <button id="sendStoryBtn" class="send-btn">📨 Отправить родителям</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // УЧЕНИКИ
+    const students = [
+        { id: 1, name: "Вероника Смирнова", parentEmail: "smirnova@example.com", traits: [] },
+        { id: 2, name: "Матвей Ковалёв", parentEmail: "kovalev@example.com", traits: [] },
+        { id: 3, name: "София Лебедева", parentEmail: "lebedeva@example.com", traits: [] },
+        { id: 4, name: "Артём Беляев", parentEmail: "belyaev@example.com", traits: [] },
+        { id: 5, name: "Елизавета Морозова", parentEmail: "morozova@example.com", traits: [] }
+    ];
+
+    // КАЖДЫЙ ЧЕКБОКС — ЦЕЛОЕ ПРЕДЛОЖЕНИЕ / МИНИ-СЦЕНА ВНУТРИ РАССКАЗА
+    const storyFragments = {
+        progress: {
+            label: "📈 Заметно вырос за месяц",
+            text: "Когда я сравниваю его код в начале месяца и сейчас — разница колоссальная. Раньше он путался в базовых конструкциях, а теперь сам пишет небольшие программы и находит ошибки без моей подсказки."
+        },
+        homework: {
+            label: "✅ Все домашки сданы вовремя",
+            text: "Отдельно радует ответственность: за этот месяц ни одного пропущенного задания. Это говорит о том, что он взял обучение в свои руки, а я только направляю."
+        },
+        helps: {
+            label: "🤝 Помогает другим",
+            text: "На прошлом занятии я заметила, как он объяснял соседу по парте сложную тему. Когда ребёнок умеет перевести сложное на простой язык — это верный знак глубокого понимания."
+        },
+        extra: {
+            label: "⭐ Берёт дополнительные задачи",
+            text: "После обязательной программы он всегда просит «дайте что-то посложнее». Это не зубрёжка — это настоящий голод до знаний, который я стараюсь поддерживать."
+        },
+        curious: {
+            label: "🧠 Спрашивает нестандартно",
+            text: "Меня особенно радуют его вопросы: «А почему так? А если сделать иначе?». Это мышление инженера, а не исполнителя — именно такие дети потом вырастают в сильных разработчиков."
+        },
+        focus: {
+            label: "🎯 Стал собраннее",
+            text: "Раньше он часто отвлекался, терял нить занятия. Сейчас — полная включённость. Я вижу, как он учится управлять своим вниманием, и это навык на всю жизнь."
+        },
+        struggling: {
+            label: "🌱 Есть сложности, но старается",
+            text: "Честно скажу: не всё даётся легко. Но он не бросает, приходит с вопросами, пытается разобраться сам. Для меня как для учителя это важнее, чем готовые правильные ответы."
+        },
+        team: {
+            label: "👥 Хорош в команде",
+            text: "В парных проектах он раскрывается по-новому: слушает, предлагает, не перебивает. Такие дети создают здоровую атмосферу в группе."
+        }
+    };
+
+    const allTraits = Object.entries(storyFragments).map(([id, data]) => ({
+        id: id,
+        label: data.label,
+        text: data.text
+    }));
+
+    let currentStudent = null;
+    let selectedTraits = new Set();
+
+    // ГЛАВНЫЙ ГЕНЕРАТОР — ЖИВОЙ РАССКАЗ, А НЕ СПИСОК
+    function generateLivingStory(studentName, parentEmail, selectedTexts) {
+        const name = studentName.split(' ')[0];
+        const month = new Date().toLocaleString('ru', { month: 'long' });
+        
+        let middleParagraph = "";
+        
+        if (selectedTexts.length === 0) {
+            middleParagraph = "Пока я не накопила достаточно конкретных наблюдений, чтобы написать развёрнутый рассказ. Но каждый урок я вижу ребёнка и фиксирую детали. Если хотите получить такой же подробный отзыв через пару недель — просто напишите мне «да», и я подготовлю.";
+        } else if (selectedTexts.length === 1) {
+            middleParagraph = `За ${month} мне запомнилось вот что.\n\n${selectedTexts[0]}`;
+        } else {
+            // Сшиваем в связный абзац, а не маркированный список
+            middleParagraph = `За ${month} я присматривалась к ${name} и вот что хочу сказать.\n\n`;
+            for (let i = 0; i < selectedTexts.length; i++) {
+                if (i === selectedTexts.length - 1) {
+                    middleParagraph += selectedTexts[i];
+                } else {
+                    middleParagraph += selectedTexts[i] + " ";
+                }
+            }
+        }
+        
+        // Мягкий намёк на продление (лояльность)
+        let gentleHint = "";
+        if (selectedTexts.length >= 3) {
+            gentleHint = "Мы на хорошей волне. Следующий месяц закрепим результат. Если планируете продолжать — место сохраняется. Если нужна пауза — просто ответьте, подберём удобный вариант.";
+        } else if (selectedTexts.length >= 1) {
+            gentleHint = "Вижу движение. Чтобы не сбить ритм, лучше заниматься без длинных перерывов. Системность даёт результат быстрее, чем рывки.";
+        } else {
+            gentleHint = "Хотите получить такой же живой разбор через неделю? Напишите «хочу» — я соберу полную картину специально для вас.";
+        }
+        
+        // ИТОГОВЫЙ РАССКАЗ — КАК ПИСЬМО ДРУГУ, А НЕ ОТЧЁТ
+        return `Здравствуйте, дорогие родители ${name}.
+
+Меня зовут Анна Сергеевна. Я веду у вашего ребёнка программирование в «Квантастике».
+
+Я не люблю шаблонные фразы. Вместо этого хочу просто рассказать, что я вижу на занятиях — честно, по-человечески.
+
+${middleParagraph}
+
+Что это значит для вас?
+
+— Ребёнок не «отстаёт» и не «идёт вперёд» абстрактно. Я сравниваю его только с ним самим месяц назад.
+— Я действительно слежу за каждым учеником. Каждая деталь выше — результат нашей совместной работы.
+— Интерес к IT не угасает, когда кто-то замечает маленькие победы. Я это делаю.
+
+${gentleHint}
+
+Спасибо, что доверяете мне своего ребёнка. 
+Если захотите поговорить подробнее — я здесь.
+
+С теплом,
+Анна Сергеевна
+Преподаватель «Квантастика»
+
+Родительская почта: ${parentEmail}`;
+    }
+    
+    function updateStory() {
+        if (!currentStudent) {
+            document.getElementById('storyPreview').innerHTML = '<span class="empty-prompt">Выберите ученика из списка слева, и я напишу живой рассказ о нём для родителей.</span>';
+            return;
+        }
+        const selectedTexts = [];
+        for (let id of selectedTraits) {
+            const fragment = storyFragments[id];
+            if (fragment) selectedTexts.push(fragment.text);
+        }
+        const story = generateLivingStory(currentStudent.name, currentStudent.parentEmail, selectedTexts);
+        document.getElementById('storyPreview').innerText = story;
+    }
+    
+    function renderTraits() {
+        const container = document.getElementById('traitsContainer');
+        container.innerHTML = "";
+        allTraits.forEach(trait => {
+            const div = document.createElement('div');
+            div.className = "trait-item";
+            const cb = document.createElement('input');
+            cb.type = "checkbox";
+            cb.id = `ch_${trait.id}`;
+            cb.checked = selectedTraits.has(trait.id);
+            cb.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    selectedTraits.add(trait.id);
+                } else {
+                    selectedTraits.delete(trait.id);
+                }
+                if (currentStudent) {
+                    currentStudent.traits = Array.from(selectedTraits);
+                }
+                updateStory();
+            });
+            const label = document.createElement('label');
+            label.htmlFor = `ch_${trait.id}`;
+            label.innerText = trait.label;
+            div.appendChild(cb);
+            div.appendChild(label);
+            container.appendChild(div);
+        });
+    }
+    
+    function loadStudentTraits(student) {
+        selectedTraits.clear();
+        if (student.traits && student.traits.length) {
+            student.traits.forEach(t => selectedTraits.add(t));
+        }
+        renderTraits();
+        updateStory();
+    }
+    
+    function selectStudent(student) {
+        if (currentStudent) {
+            currentStudent.traits = Array.from(selectedTraits);
+        }
+        currentStudent = student;
+        document.getElementById('studentName').innerText = student.name;
+        document.getElementById('parentEmail').innerText = student.parentEmail;
+        if (!student.traits) student.traits = [];
+        loadStudentTraits(student);
+        highlightCard(student.id);
+    }
+    
+    function highlightCard(id) {
+        document.querySelectorAll('.student-card').forEach(card => {
+            const sid = parseInt(card.dataset.id);
+            if (sid === id) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+            }
+        });
+    }
+    
+    function renderStudents() {
+        const container = document.getElementById('studentList');
+        container.innerHTML = "";
+        students.forEach(s => {
+            const card = document.createElement('div');
+            card.className = "student-card";
+            card.dataset.id = s.id;
+            const hasDraft = s.traits && s.traits.length > 0;
+            card.innerHTML = `
+                <div class="student-info">
+                    <h3>${s.name}</h3>
+                    <p>${s.parentEmail}</p>
+                </div>
+                ${hasDraft ? '<div class="badge">черновик</div>' : '<div class="badge badge-empty">нет отзыва</div>'}
+            `;
+            card.addEventListener('click', () => selectStudent(s));
+            container.appendChild(card);
+        });
+        if (!currentStudent && students.length) {
+            selectStudent(students[0]);
+        }
+    }
+    
+    function sendStory() {
+        if (!currentStudent) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerText = '⚠️ Сначала выберите ученика';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+            return;
+        }
+        
+        const selectedTexts = [];
+        for (let id of selectedTraits) {
+            const fragment = storyFragments[id];
+            if (fragment) selectedTexts.push(fragment.text);
+        }
+        const finalStory = generateLivingStory(currentStudent.name, currentStudent.parentEmail, selectedTexts);
+        
+        // Логируем для отладки
+        console.log("=== ЖИВОЙ РАССКАЗ ОТПРАВЛЕН ===\n", finalStory);
+        
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerText = `✉️ Рассказ отправлен родителям ${currentStudent.name}`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+        
+        if (currentStudent) {
+            currentStudent.traits = Array.from(selectedTraits);
+        }
+        renderStudents();
+        if (currentStudent) {
+            highlightCard(currentStudent.id);
+        }
+    }
+    
+    // Инициализация
+    document.getElementById('sendStoryBtn').addEventListener('click', sendStory);
+    renderStudents();
+    renderTraits();
+</script>
+</body>
+</html>
